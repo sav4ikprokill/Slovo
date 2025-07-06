@@ -89,7 +89,7 @@ def accept_jesus(update: Update, context: CallbackContext):
 def settime_entry(update: Update, context: CallbackContext):
     update.message.reply_text("🕒 Введи удобное время в формате ЧЧ:ММ (например, 08:30):")
     return CHOOSING_TIME
-
+#koigfjdguifj
 def settime_received(update: Update, context: CallbackContext):
     user_id = str(update.effective_user.id)
     users = load_users()
