@@ -10,33 +10,22 @@
     "minute": 30
   },
   "7136170945": {
-    "next_verse_index": 6,
-    "notification_time": "15:09",
-    "subscribed": true,
-    "last_verse_date": "2025-05-21",
-    "current_verse_index": 1,
-    "current_verse": 5,
-    "last_sent": "2025-05-22",
-    "time": "20:57"
+    "next_verse_index": 1,
+    "notification_time": "08:00",
+    "subscribed": true
   },
   "1442183330": {
-    "next_verse_index": 18,
-    "notification_time": "15:24",
+    "next_verse_index": 16,
+    "notification_time": "14:55",
     "subscribed": true,
     "last_verse_date": "2025-05-21",
     "current_verse_index": 14,
-    "current_verse": 17,
-    "last_sent": "2025-05-22",
-    "time": "20:40"
+    "current_verse": 15,
+    "last_sent": "2025-07-06"
   },
   "5872155342": {
     "next_verse_index": 1,
     "notification_time": "08:00",
     "subscribed": true
-  },
-  "1433584013": {
-    "next_verse_index": 1,
-    "current_verse": 0,
-    "last_sent": "2025-05-22"
   }
 }

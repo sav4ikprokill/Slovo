@@ -1,4 +1,5 @@
 import json
+import random
 import os
 import logging
 import pytz
@@ -6,7 +7,7 @@ from datetime import datetime, time, timedelta, timezone
 from telegram import Update, ReplyKeyboardMarkup, ParseMode
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, ConversationHandler
 
-TOKEN = os.getenv("7829591487:AAE9S2TUleAftie5609_WfLvZbAL3ZiWIjQ")
+TOKEN = os.getenv("BOT_TOKEN")
 VERSES_FILE = "verses_nrp_365.json"
 USERS_FILE = "users.json"
 
@@ -19,6 +20,9 @@ CHOOSING_TIME = 1
 
 def load_verses():
     with open(VERSES_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+def load_themes():
+    with open("themes.json", "r",encoding="utf-8") as f:
         return json.load(f)
 
 def load_users():
@@ -57,8 +61,16 @@ def get_verse_for_user(user_id, verses, force_new=False):
 def start(update: Update, context: CallbackContext):
     kb = [["📖 Слово на день", "🙏 Молитвенная просьба"],
           ["🤔 Почему Бог?", "❤️ Принять Иисуса"],
-          ["⚙️ Настроить время"]]
-    update.message.reply_text("Добро пожаловать! Я здесь, чтобы делиться с тобой Божьим Словом каждый день. ✝️", reply_markup=ReplyKeyboardMarkup(kb, resize_keyboard=True))
+          ["⚙️ Настроить время", "🎯 Темы",]]
+    
+message = (
+     "Приветствую тебя! 🙌\n\n"
+        "Ты не случайно здесь.\n"
+        "Бог знает твоё сердце и хочет говорить с тобой.\n"
+        "Каждый день — новое прикосновение Его любви и силы.\n\n"
+        "Готов открыть Слово на сегодня? 📖"
+    )
+
 
 def slovo(update: Update, context: CallbackContext):
     verses = load_verses()
@@ -120,6 +132,35 @@ def send_daily_verse(context: CallbackContext):
     except Exception as e:
         logger.error(f"❌ Ошибка отправки стиха {user_id}: {e}")
 
+def show_themes(update: Update):
+    kb = [["🙌 Ободрение", "🔥 Вера"],
+          ["💌 Любовь", "🛡 Страх"],
+          ["🕊 Прощение"]]
+    update.message.reply_text("Выбери тему, которая близка тебе сейчас:", reply_markup=ReplyKeyboardMarkup(kb, resize_keyboard=True))
+def send_theme_verse(update: Update, theme_key: str):
+    themes = load_themes()
+    if theme_key not in themes:
+        update.message.reply_text("Извини, я не нашёл такую тему.")
+        return
+    verse = random.choice(themes[theme_key])
+    msg = f"📖 *{verse['reference']}*\n{verse['text']}"
+    if verse.get("comment"):
+        msg += f"\n\n_{verse['comment']}_"
+    update.message.reply_text(msg, parse_mode=ParseMode.MARKDOWN)
+
+def accept_jesus(update: Update, context: CallbackContext):
+    message = (
+        "❤️ *Иисус любит тебя и хочет быть рядом*\n\n"
+        "Мы все согрешили, и каждый нуждается в прощении. "
+        "Бог так возлюбил тебя, что отдал Своего Сына, Иисуса, чтобы ты мог жить вечно.\n\n"
+        "*Если ты хочешь принять Иисуса*, просто скажи от сердца:\n\n"
+        "_«Господь Иисус, прости мои грехи. Я верю, что Ты умер за меня и воскрес. "
+        "Я принимаю Тебя как своего Спасителя. Войди в моё сердце. Аминь.»_\n\n"
+        "Если ты молился — знай: Бог услышал тебя. Это только начало великого пути! 🙌"
+    )
+    update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
+
+
 def handle_text(update: Update, context: CallbackContext):
     text = update.message.text.lower()
     if "слово" in text:
@@ -132,6 +173,19 @@ def handle_text(update: Update, context: CallbackContext):
         return accept_jesus(update, context)
     elif "время" in text:
         return settime_entry(update, context)
+    elif "темы" in text:
+        return show_themes(update)
+    elif "ободрен" in text:
+        return send_theme_verse(update, "ободрение")
+    elif "вера" in text:
+        return send_theme_verse(update, "вера")
+    elif "любовь" in text:
+        return send_theme_verse(update, "любовь")
+    elif "страх" in text:
+        return send_theme_verse(update, "страх")
+    elif "прощен" in text:
+        return send_theme_verse(update, "прощение")
+
 
 def main():
     updater = Updater(TOKEN)
