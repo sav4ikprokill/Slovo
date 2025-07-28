@@ -61,15 +61,22 @@ def get_verse_for_user(user_id, verses, force_new=False):
 def start(update: Update, context: CallbackContext):
     kb = [["📖 Слово на день", "🙏 Молитвенная просьба"],
           ["🤔 Почему Бог?", "❤️ Принять Иисуса"],
-          ["⚙️ Настроить время", "🎯 Темы",]]
-    
-message = (
-     "Приветствую тебя! 🙌\n\n"
+          ["⚙️ Настроить время", "🎯 Темы"]]
+    update.message.reply_text(
+        "Главное меню 🕊️",
+        reply_markup=ReplyKeyboardMarkup(kb, resize_keyboard=True)
+    )
+
+    message = (
+        "Приветствую тебя! 🙌\n\n"
         "Ты не случайно здесь.\n"
         "Бог знает твоё сердце и хочет говорить с тобой.\n"
         "Каждый день — новое прикосновение Его любви и силы.\n\n"
         "Готов открыть Слово на сегодня? 📖"
     )
+
+    update.message.reply_text(message, reply_markup=ReplyKeyboardMarkup(kb, resize_keyboard=True))
+
 
 
 def slovo(update: Update, context: CallbackContext):
@@ -135,8 +142,10 @@ def send_daily_verse(context: CallbackContext):
 def show_themes(update: Update):
     kb = [["🙌 Ободрение", "🔥 Вера"],
           ["💌 Любовь", "🛡 Страх"],
-          ["🕊 Прощение"]]
+          ["🕊 Прощение"],
+          ["⬅ Назад"]]
     update.message.reply_text("Выбери тему, которая близка тебе сейчас:", reply_markup=ReplyKeyboardMarkup(kb, resize_keyboard=True))
+
 def send_theme_verse(update: Update, theme_key: str):
     themes = load_themes()
     if theme_key not in themes:
@@ -185,6 +194,9 @@ def handle_text(update: Update, context: CallbackContext):
         return send_theme_verse(update, "страх")
     elif "прощен" in text:
         return send_theme_verse(update, "прощение")
+    elif "назад" in text:
+        return show_main_menu(update)
+
 
 
 def main():
